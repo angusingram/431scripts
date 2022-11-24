@@ -37,7 +37,7 @@ def writ_loop(start) -> None:
     f.write(str(lengths))
     f.close()
 
-    print(time.time() - start) #prints runtime
+    print('Runtime: ' + str(time.time() - start)) #prints runtime
 
 def over_loop(rng: int, cap_location: str):
     '''Loops through n-1 TCP streams specified by rng in file at address cap_location'''
