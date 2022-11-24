@@ -43,7 +43,7 @@ def over_loop(rng: int, cap_location: str):
     '''Loops through n-1 TCP streams specified by rng in file at address cap_location'''
     for i in range(rng):
         #Reopening file per loop is most likely cause of slow runtime TODO: find way to refresh filter versus reopening file n-1 times?    
-        cap = pyshark.FileCapture('C:/Users/Z/Desktop/capture2.pcapng', display_filter="tcp.stream eq " + str(i))
+        cap = pyshark.FileCapture(cap_location, display_filter="tcp.stream eq " + str(i))
         packet_loop(cap)
 
 if __name__ == "__main__":
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     total_transm_time = [] # 1d array of transmission time per TCP stream
 
     rng = 19 # rng = n-1 number of TCP streams to loop through
-    cap_location = 'C:/Users/Z/Desktop/capture2.pcapng' #Address for capture file; TODO: add check for if a .pcapng is in directory
+    cap_location = '' #Address for capture file; TODO: add check for if a .pcapng is in directory
 
     over_loop(rng, cap_location)
     writ_loop(start)
