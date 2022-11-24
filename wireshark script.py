@@ -3,15 +3,8 @@ import time
 import nest_asyncio
 nest_asyncio.apply()
 
-# need Frame Length (bytes), Time since First Frame, RTT to ACK segment
-start = time.time()
-
-lengths = [] # 2d array
-time_to_ack = [] # 2d array
-total_transm_time = [] # 1d array
-
-
-def data(cap) -> None:
+def packet_loop(cap) -> None:
+    '''Loops through packets in TCP stream until none remain, appends data to lists'''
     local_len = []
     local_ack = []
     local_transm_time = -1
@@ -30,24 +23,39 @@ def data(cap) -> None:
         time_to_ack.append(local_ack)
         total_transm_time.append(local_transm_time)
 
-for i in range(19):    
-    cap = pyshark.FileCapture('C:/Users/Z/Desktop/capture2.pcapng', display_filter="tcp.stream eq " + str(i))
-    data(cap)
+def writ_loop(start) -> None:
+    '''Prints data and runtime on terminal, and writes data to a file "data.txt"'''
+    print(total_transm_time) #prints data to terminal
+    print(time_to_ack)
+    print(lengths)
 
-print(total_transm_time)
-print(time_to_ack)
-print(lengths)
+    f = open("data.txt", "a") #writes data to file
+    f.write(str(total_transm_time))
+    f.write("\n~~\n")
+    f.write(str(time_to_ack))
+    f.write("\n~~\n")
+    f.write(str(lengths))
+    f.close()
 
-f = open("data.txt", "a")
-f.write(str(total_transm_time))
-f.write("\n")
-f.write(str(time_to_ack))
-f.write("\n")
-f.write(str(lengths))
-f.close()
+    print(time.time() - start) #prints runtime
 
-print(time.time()-start)
+def over_loop(rng: int, cap_location: str):
+    '''Loops through n-1 TCP streams specified by rng in file at address cap_location'''
+    for i in range(rng):
+        #Reopening file per loop is most likely cause of slow runtime TODO: find way to refresh filter versus reopening file n-1 times?    
+        cap = pyshark.FileCapture('C:/Users/Z/Desktop/capture2.pcapng', display_filter="tcp.stream eq " + str(i))
+        packet_loop(cap)
 
+if __name__ == "__main__":
+    # need Frame Length (bytes), Time since First Frame, RTT to ACK segment
+    start = time.time() #program starting time for measuring runtime
 
-#cap1 = pyshark.FileCapture('C:/Users/Z/Desktop/capture2.pcapng', display_filter="tcp.stream eq 2")
-#print(cap1[2].tcp.field_names) #analysis_acks_frame, time_delta, .length
+    lengths = [] # 2d array of byte sizes per packet
+    time_to_ack = [] # 2d array of RTT to ACK segment per packet
+    total_transm_time = [] # 1d array of transmission time per TCP stream
+
+    rng = 19 # rng = n-1 number of TCP streams to loop through
+    cap_location = 'C:/Users/Z/Desktop/capture2.pcapng' #Address for capture file; TODO: add check for if a .pcapng is in directory
+
+    over_loop(rng, cap_location)
+    writ_loop(start)
