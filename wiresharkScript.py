@@ -58,5 +58,5 @@ def ws_main(cap_location) -> tuple:
     #cap_location = '' #Address for capture file, overwritten by function call for time being; TODO: add check for if a .pcapng is in directory
 
     over_loop(rng, cap_location)
-    writ_loop(start)
+    #writ_loop(start)
     return (lengths, time_to_ack, total_transm_time)
