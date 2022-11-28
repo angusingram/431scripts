@@ -3,6 +3,10 @@ import time
 import nest_asyncio
 nest_asyncio.apply()
 
+lengths = [] # 2d array of byte sizes per packet
+time_to_ack = [] # 2d array of RTT to ACK segment per packet
+total_transm_time = [] # 1d array of transmission time per TCP stream
+
 def packet_loop(cap) -> None:
     '''Loops through packets in TCP stream until none remain, appends data to lists'''
     local_len = []
@@ -46,16 +50,13 @@ def over_loop(rng: int, cap_location: str):
         cap = pyshark.FileCapture(cap_location, display_filter="tcp.stream eq " + str(i))
         packet_loop(cap)
 
-if __name__ == "__main__":
+def ws_main(cap_location) -> tuple:
     # need Frame Length (bytes), Time since First Frame, RTT to ACK segment
     start = time.time() #program starting time for measuring runtime
 
-    lengths = [] # 2d array of byte sizes per packet
-    time_to_ack = [] # 2d array of RTT to ACK segment per packet
-    total_transm_time = [] # 1d array of transmission time per TCP stream
-
     rng = 19 # rng = n-1 number of TCP streams to loop through
-    cap_location = '' #Address for capture file; TODO: add check for if a .pcapng is in directory
+    #cap_location = '' #Address for capture file, overwritten by function call for time being; TODO: add check for if a .pcapng is in directory
 
     over_loop(rng, cap_location)
     writ_loop(start)
+    return (lengths, time_to_ack, total_transm_time)
