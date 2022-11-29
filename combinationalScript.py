@@ -2,7 +2,7 @@ import pyshark
 import wiresharkScript
 import visualization
 if __name__ == '__main__':
-    capture_ls = ["/capture1.pcapng","/capture2.pcapng","/capture3.pcapng"]
+    capture_ls = ["capture1.pcapng","capture2.pcapng","capture3.pcapng"]
 
     lengths = []
     time_to_ack = []
