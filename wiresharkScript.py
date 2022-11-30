@@ -59,4 +59,4 @@ def ws_main(cap_location) -> tuple:
 
     over_loop(rng, cap_location)
     #writ_loop(start)
-    return (lengths, time_to_ack, total_transm_time)
+    return (total_transm_time, time_to_ack, lengths)
